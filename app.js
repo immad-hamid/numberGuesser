@@ -18,6 +18,16 @@ const gameEl = document.querySelector('#game'),
 minEl.textContent = min;
 maxEl.textContent = max;
 
+// play again even listner(we will access the button through it's parent because we have to use event deligation as the class was added after the page load)
+gameEl.addEventListener('mousedown', (e) => {
+    if (e.target.className == 'play-again') {
+        // guessBtnEl.disabled = false;
+        console.log();
+        window.location.reload();
+    }
+    console.log('game');
+});
+
 // listen guess button
 guessBtnEl.addEventListener('click', (e) => {
     console.log('Submitted');
@@ -27,15 +37,13 @@ guessBtnEl.addEventListener('click', (e) => {
         setMessage(`Please enter a message between ${min} & ${max}`, 'red');
     } else {
         if (guessLeft <= 1) {
-            guessBtnEl.disabled = true;
-            setMessage(`Game Over`);
+            result(`Game Over, the right answer was ${winningNum}`, false);
         } else {
             if (guess === winningNum) {
-                guessBtnEl.disabled = true;
-                setMessage(`You are right ${winningNum} is the right answer`, 'green');
+                result(`You are right ${winningNum} is the right answer`, true);
             } else {
                 guessLeft = guessLeft - 1;
-                setMessage(`You have ${guessLeft} turns left`, 'initial');
+                setMessage(`You have ${guessLeft} turns left`, 'red');
             }
         }
     }
@@ -43,8 +51,22 @@ guessBtnEl.addEventListener('click', (e) => {
     e.preventDefault();
 });
 
+function result(msg, won) {
+    let color;
+
+    // if user win then let the color be green and red if the user lose
+    won ? color = 'green' : color = 'red';
+    // showing the result by again sending the text and color to setMessage
+    setMessage(msg, color);
+
+    // play again
+    guessBtnEl.value = 'Play Again';
+    guessBtnEl.className += 'play-again';
+}
+
 function setMessage(msg, color) {
     message.style.color = color;
     message.textContent = msg;
     guessInputEl.style.borderColor = color;
+    guessInputEl.value = '';
 }
